@@ -6,8 +6,6 @@ class Web3Global {
     web3Storage: Web3Storage;
 
     constructor(){
-        let w3s = new Web3Storage({token: WEB3_STORAGE_API_KEY});
-
         this.web3Storage = new Web3Storage({token:WEB3_STORAGE_API_KEY})
     }
 }
