@@ -1,54 +1,43 @@
-import * as React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Checkbox from '@mui/material/Checkbox';
-import Avatar from '@mui/material/Avatar';
-import { Grid } from '@mui/material';
-import ListSubheader from '@mui/material/ListSubheader';
+import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useState } from 'react';
+import ContributionList from './ContributionList';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import ContributionTree from './ContributionTree';
 
 export default function ContributionNav(props: any) {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [listView, setListView] = useState<boolean>(true);
 
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number,
+  const handleToggle = (
+    event: React.MouseEvent<HTMLElement>,
+    isListView: boolean,
   ) => {
-    props.setNext(index);
-    setSelectedIndex(index);
+    props.setPrev(-1);
+    props.setNext(-1);
+    setListView(isListView);
   };
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <List dense sx={{ width: '100%', maxWidth: 500, maxHeight: 360, bgcolor: 'background.paper', overflow: 'auto'}}>
-        <ListSubheader>{`Previous Contributor`}</ListSubheader>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((value) => {
-            const labelId = `checkbox-list-secondary-label-${value}`;
-            return value == 1 ? <ListSubheader>{`Next Contributors`}</ListSubheader>:(
-              <ListItem
-                key={value}
-                disablePadding
-              >
-                <ListItemButton
-                  selected={value === selectedIndex}
-                  onClick={(event) => handleListItemClick(event, value)}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      alt={`Avatar n°${value + 1}`}
-                      src={`/static/images/avatar/${value + 1}.jpg`}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>   
-      </Grid> 
+        {listView && <ContributionList setNext={props.setNext} setPrev={props.setPrev}/> }
+        {!listView && <ContributionTree setNext={props.setNext} setPrev={props.setPrev}/> }        
+      </Grid>
+      <Grid item xs={12} container justifyContent="flex-end">
+        <ToggleButtonGroup
+        value={listView}
+        exclusive
+        onChange={handleToggle}
+        aria-label="view toggle"
+      >
+        <ToggleButton value={true} aria-label="listOn">
+          <FormatListBulletedIcon />
+        </ToggleButton>
+        <ToggleButton value={false} aria-label="treeOn">
+          <AccountTreeIcon />
+        </ToggleButton>
+      </ToggleButtonGroup>
+      </Grid>
     </Grid>
   );
 }

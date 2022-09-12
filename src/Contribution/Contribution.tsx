@@ -6,9 +6,11 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import ContributionInput from './ContributionInput';
 import ContributionNav from './ContributionNav';
+import ContributionTree from './ContributionTree';
 
 const Contribution = () => {
-    const [next, setNext] = useState(0)
+    const [next, setNext] = useState(-1)
+    const [prev, setPrev] = useState(-1)
 
     function onGetNextContrib(event: any) {
         // TODO
@@ -28,7 +30,7 @@ const Contribution = () => {
                     <ContributionInput/>
                 </Grid>
                 <Grid item xs={6}>
-                    <ContributionNav setNext={setNext}/>
+                    <ContributionNav setNext={setNext} setPrev={setPrev}/>
                 </Grid>  
                 <Grid item xs={6}>
                     <IconButton
@@ -38,6 +40,7 @@ const Contribution = () => {
                         aria-haspopup="true"
                         onClick={onGetPrevContrib}
                         color="inherit"
+                        disabled={prev === -1}
                     >
                         <ArrowBackIosIcon/>
                     </IconButton>                             
@@ -50,7 +53,7 @@ const Contribution = () => {
                         aria-haspopup="true"
                         onClick={onGetNextContrib}
                         color="inherit"
-                        disabled={next === 0}
+                        disabled={next === -1}
                     >
                         <ArrowForwardIosIcon/>
                     </IconButton>               
