@@ -6,6 +6,7 @@ import Contribution from "./Contribution/Contribution";
 import Create from "./Create";
 import Header from "./Header";
 import Web3Global from "./Web3Global";
+import Welcome from "./Welcome";
 
 declare var window: any
 
@@ -20,7 +21,7 @@ export default function App() {
   const [cid, setCid] = useState("")
   const [contrib, setContrib] = useState()
   const [storyAddr, setStoryAddr] = useState("")
-  const [page, setPage] = useState("")
+  const [page, setPage] = useState("Welcome")
 
   useEffect(() => {
     connectWallet();
@@ -200,7 +201,7 @@ export default function App() {
   return (
     <div className="App">
         <Header setPage={setPage}/>
-        
+        {page==="Welcome" && <Welcome/>}
         {page==="Create" && <Create/>}
         {page==="Contribute" && <Contribution/>}
 
