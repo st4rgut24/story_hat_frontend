@@ -4,8 +4,10 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 
-import { TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { useState } from 'react';
 
 const Create = () => {
@@ -22,41 +24,68 @@ const Create = () => {
 
     function handleSummaryChange(event: any){
         setSummary(event.target.value)
-    }    
+    }
+
+    function onCreateStory(event: any) {
+        // TODO: create story
+    }
 
     return (
-        <Box>
-            <TextField
-                id="outlined-name"
-                label="Title"
-                value={title}
-                onChange={handleTitleChange}
-            />  
-            <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Genre</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={genre}
-                    label="Genre"
-                    onChange={handleGenreChange}
-                >
-                    <MenuItem value={"Thriller"}>Thriller</MenuItem>
-                    <MenuItem value={"Crime"}>Crime</MenuItem>
-                    <MenuItem value={"Fantasy"}>Fantasy</MenuItem>
-                    <MenuItem value={"Romance"}>Romance</MenuItem>
-                    <MenuItem value={"Science Fiction"}>Science Fiction</MenuItem>
-                    <MenuItem value={"Adventure"}>Adventure</MenuItem>
-                </Select>
-            </FormControl>
-            <TextField
-                id="outlined-multiline-flexible"
-                label="Multiline"
-                multiline
-                maxRows={4}
-                value={summary}
-                onChange={handleSummaryChange}
-            />
+        <Box maxWidth={500} margin='auto'>
+            <Grid container spacing={1}>
+                <Grid item xs={12}>
+                    <h1>Create a Story</h1>
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        id="outlined-name"
+                        label="Title"
+                        fullWidth
+                        value={title}
+                        onChange={handleTitleChange}
+                        margin="normal"
+                    />                 
+                </Grid>
+                <Grid item xs={12}>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel id="demo-simple-select-label">Genre</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={genre}
+                            label="Genre"
+                            onChange={handleGenreChange}
+                        >
+                            <MenuItem value={"Thriller"}>Thriller</MenuItem>
+                            <MenuItem value={"Crime"}>Crime</MenuItem>
+                            <MenuItem value={"Fantasy"}>Fantasy</MenuItem>
+                            <MenuItem value={"Romance"}>Romance</MenuItem>
+                            <MenuItem value={"Science Fiction"}>Science Fiction</MenuItem>
+                            <MenuItem value={"Adventure"}>Adventure</MenuItem>
+                        </Select>
+                    </FormControl>                
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        id="outlined-multiline-flexible"
+                        label="Summary"
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        value={summary}
+                        onChange={handleSummaryChange}
+                        margin="normal"
+                    />                
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        id="outlined-multiline-flexible"
+                        onClick={onCreateStory}
+                    >
+                        Create
+                    </Button>                
+                </Grid>                
+            </Grid>
         </Box>
     );
 };

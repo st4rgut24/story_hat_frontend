@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Filelike } from "web3.storage/dist/src/lib/interface";
 import ContractGlobal from "./ContractGlobal";
+import Contribution from "./Contribution/Contribution";
 import Create from "./Create";
 import Header from "./Header";
 import Web3Global from "./Web3Global";
@@ -19,7 +20,7 @@ export default function App() {
   const [cid, setCid] = useState("")
   const [contrib, setContrib] = useState()
   const [storyAddr, setStoryAddr] = useState("")
-  const [page, setPage] = useState("Explore")
+  const [page, setPage] = useState("")
 
   useEffect(() => {
     connectWallet();
@@ -199,7 +200,10 @@ export default function App() {
   return (
     <div className="App">
         <Header setPage={setPage}/>
+        
         {page==="Create" && <Create/>}
+        {page==="Contribute" && <Contribution/>}
+
         <form onSubmit={handleGetContent}>
           <input type="text" onChange={handleCidChange}/>
           <button type="submit">Retrieve By CID</button> 
