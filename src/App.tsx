@@ -11,6 +11,7 @@ import Welcome from "./Welcome";
 declare var window: any
 
 const DEFAULT_STORY_HEADER = "Create a new story or contribute to an existing one";
+export const CONTRIBUTE_PAGE = "Contribute";
 
 export default function App() {
 
@@ -21,10 +22,18 @@ export default function App() {
   const [contrib, setContrib] = useState()
   const [storyAddr, setStoryAddr] = useState("")
   const [page, setPage] = useState("Welcome")
+  const [chosenCID, setChosenCID] = useState("")
+
 
   useEffect(() => {
     connectWallet();
   }, []);
+
+  useEffect(() => {
+    if (chosenCID !== ""){
+      setPage(CONTRIBUTE_PAGE);
+    }
+  }, [chosenCID]);  
 
   function handleContribChange(event: any) {
     setContrib(event.target.value);
@@ -182,9 +191,9 @@ export default function App() {
   return (
     <div className="App">
         <Header setPage={setPage}/>
-        {page==="Welcome" && <Welcome/>}
+        {page==="Welcome" && <Welcome setChosenCID={setChosenCID}/>}
         {page==="Create" && <Create/>}
-        {page==="Contribute" && <Contribution/>}
+        {page===CONTRIBUTE_PAGE && <Contribution chosenCID={chosenCID}/>}
 
         <form onSubmit={handleGetContent}>
           <input type="text" onChange={handleCidChange}/>

@@ -1,17 +1,33 @@
 import { Button, Grid, IconButton, TextField } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ContractGlobal from '../ContractGlobal';
+import Web3Global from '../Web3Global';
 
-const ContributionInput = () => {
+const ContributionInput = (props: any) => {
 
     const [prevContribution, setPrevContribution] = useState("An example story you wish to contribute to");
     const [contribution, setContribution] = useState("");
+
+    useEffect(() => {
+       Web3Global.getStoryContent(props.prevCID).then((storyContent: string) => {
+            setPrevContribution(storyContent);
+       }).catch((error: Error) => setPrevContribution("Error:" + error.message));
+    }, [])
 
     function handleContribute(event: any) {
         setContribution(event.target.value);
     }
 
-    function onContribute(event: any) {
-        // TODO
+    function onContributeSubmit(event: any) {
+        // TODO contribute()
+        Web3Global.getCidFromContent(contribution, props.prevCID).then((curCID: string) => {
+            ContractGlobal.storyContract?.contribute(curCID, props.prevCID).then((tx) => {
+                tx.wait().then(() => {
+                    console.log("new contribution has been added");
+                    props.setCID(curCID);
+                })
+            })
+        })
     }
 
     return (
@@ -42,7 +58,7 @@ const ContributionInput = () => {
             <Grid item xs={12}>
                 <Button
                     id="outlined-multiline-flexible"
-                    onClick={onContribute}
+                    onClick={onContributeSubmit}
                 >
                     Contribute
                 </Button>                

@@ -38,8 +38,10 @@ const Create = () => {
         const initialContrib = createInitialContrib();
         let curCid = await Web3Global.getCidFromContent(initialContrib, title);
         if (curCid) {
-            let cidBytes = ContractGlobal.convertCidToBytes(curCid);
+            // convert to bytes because contract stores cids as byte array
+            let cidBytes = Web3Global.convertCidToBytes(curCid);
             console.log("creating story ...");
+            console.log("bytes-like", cidBytes);
             if (ContractGlobal.storyShareContract){
                 const bytes32Genre = ethers.utils.formatBytes32String(genre);
                 let tx = await ContractGlobal.storyShareContract.createStory(cidBytes, title, summary, bytes32Genre);

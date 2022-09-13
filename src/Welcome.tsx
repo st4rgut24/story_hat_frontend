@@ -11,10 +11,10 @@ import ContractGlobal from './ContractGlobal';
 import { useState, useEffect } from 'react';
 import { BytesLike, ethers } from 'ethers';
 
-const Welcome = () => {
+const Welcome = (props: any) => {
     const [storyDetailsArr, setStoryDetailsArr] = useState<SharedStructs.StoryDetailsStructOutput[]>([])
 
-    useEffect(() => {
+    useEffect(() => {   
         if (ContractGlobal.storyShareContract) {
             ContractGlobal.storyShareContract.getStoryDetails().then((storyDetailsRes) => setStoryDetailsArr(storyDetailsRes));
         }
@@ -22,6 +22,10 @@ const Welcome = () => {
 
     function stringifyGenre(genreBytes: BytesLike): string {
         return ethers.utils.parseBytes32String(genreBytes);
+    }
+
+    function handleClickStory(cid: string): void {
+        props.setChosenCID(cid);
     }
 
     return (
@@ -32,10 +36,10 @@ const Welcome = () => {
                     <Grid item xs={4}>
                         <Card sx={{ minWidth: 275 }}>
                             <CardContent>
-                                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                <Typography variant={"h5"} color="text.secondary" gutterBottom>
                                 {storyDetails.title}
                                 </Typography>
-                                <Typography variant="h5" component="div">
+                                <Typography  sx={{ fontSize: 14 }} component="div">
                                 {stringifyGenre(storyDetails.genre)}
                                 </Typography>
                                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
@@ -43,7 +47,7 @@ const Welcome = () => {
                                 </Typography>
                             </CardContent>
                             <CardActions>
-                                <Button size="small">Read</Button>
+                                <Button size="small" onClick={() => handleClickStory(storyDetails.cid)}>Read</Button>
                             </CardActions>
                         </Card>                    
                     </Grid> 

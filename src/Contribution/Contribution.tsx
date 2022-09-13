@@ -1,6 +1,6 @@
 import { Grid, IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -8,12 +8,30 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 import ContributionInput from './ContributionInput';
 import ContributionNav from './ContributionNav';
+import ContractGlobal from '../ContractGlobal';
 
-const Contribution = () => {
+import { SharedStructs } from '../typechain-types/StoryShare.sol/Story';
+
+const Contribution = (props: any) => {
     const [listView, setListView] = useState<boolean>(true);
 
     const [next, setNext] = useState(-1)
     const [prev, setPrev] = useState(-1)
+
+    const [curCID, setCurCID] = useState(props.chosenCID);
+
+    const [contribution, setContribution] = useState<SharedStructs.ContributionStructOutput>();
+
+    useEffect(() => {
+        if (ContractGlobal.storyShareContract && curCID.length > 0) {
+            ContractGlobal.setStory(curCID).then(() => {
+                console.log("great success set story yay");
+                if (ContractGlobal.storyContract){
+                    ContractGlobal.storyContract.getContribution(curCID).then((contrib) => setContribution(contrib));
+                }
+            });
+        }
+    }, [curCID]);
 
     function onGetNextContrib(event: any) {
         // TODO
@@ -54,10 +72,10 @@ const Contribution = () => {
                     </ToggleButtonGroup>
                 </Grid>                
                 <Grid item xs={6}>
-                    <ContributionInput/>
+                    <ContributionInput setCID={setCurCID} prevCID={props.chosenCID} />
                 </Grid>
                 <Grid item xs={6}>
-                    <ContributionNav setNext={setNext} setPrev={setPrev} listView={listView}/>
+                    <ContributionNav contribution={contribution} setNext={setNext} setPrev={setPrev} listView={listView}/>
                 </Grid>  
                 <Grid item xs={6}>
                     <IconButton
