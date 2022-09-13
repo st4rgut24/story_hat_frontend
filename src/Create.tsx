@@ -3,14 +3,13 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
+import Select from '@mui/material/Select';
 
 import { Button, Grid, TextField } from '@mui/material';
 import { useState } from 'react';
 import ContractGlobal from './ContractGlobal';
 import Web3Global from './Web3Global';
+import { ethers } from 'ethers';
 
 const Create = () => {
     const [title, setTitle] = useState('')
@@ -42,7 +41,8 @@ const Create = () => {
             let cidBytes = ContractGlobal.convertCidToBytes(curCid);
             console.log("creating story ...");
             if (ContractGlobal.storyShareContract){
-                let tx = await ContractGlobal.storyShareContract.createStory(cidBytes, title, summary, genre);
+                const bytes32Genre = ethers.utils.formatBytes32String(genre);
+                let tx = await ContractGlobal.storyShareContract.createStory(cidBytes, title, summary, bytes32Genre);
                 await tx.wait();
             
                 console.log("tx included");
@@ -108,7 +108,7 @@ const Create = () => {
                     <Button
                         id="outlined-multiline-flexible"
                         onClick={onCreateStory}
-                        disabled={isStoryTextSet()}
+                        disabled={!isStoryTextSet()}
                     >
                         Create
                     </Button>                

@@ -13,11 +13,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -25,9 +21,9 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "./common";
 
-export declare namespace SharedStructs {
+export declare namespace Story {
   export type ContributionStruct = {
     authorAddr: PromiseOrValue<string>;
     cid: PromiseOrValue<BytesLike>;
@@ -55,35 +51,25 @@ export declare namespace SharedStructs {
     state: number;
     leader: string;
   };
-
-  export type StoryDetailsStruct = {
-    cid: PromiseOrValue<BytesLike>;
-    title: PromiseOrValue<string>;
-    summary: PromiseOrValue<string>;
-    genre: PromiseOrValue<BytesLike>;
-  };
-
-  export type StoryDetailsStructOutput = [string, string, string, string] & {
-    cid: string;
-    title: string;
-    summary: string;
-    genre: string;
-  };
 }
 
-export interface StoryInterface extends utils.Interface {
+export interface StoryTestInterface extends utils.Interface {
   functions: {
     "authorContribCounts(address)": FunctionFragment;
+    "bookmark(bytes)": FunctionFragment;
+    "bookmarks(address)": FunctionFragment;
+    "cid()": FunctionFragment;
     "contribute(bytes,bytes)": FunctionFragment;
     "contributions(bytes)": FunctionFragment;
     "draftVotes(bytes,uint256)": FunctionFragment;
     "getContribution(bytes)": FunctionFragment;
-    "getDraftVotes(bytes)": FunctionFragment;
-    "getStoryDetails()": FunctionFragment;
+    "getSavedCID()": FunctionFragment;
+    "getStoryline(bytes)": FunctionFragment;
+    "getStorylineLeader(address[])": FunctionFragment;
+    "getStorylineTest(bytes)": FunctionFragment;
     "initialContribution()": FunctionFragment;
     "publishDraft(bytes,bytes)": FunctionFragment;
     "publishVotes(bytes,uint256)": FunctionFragment;
-    "storyDetails()": FunctionFragment;
     "uniqueAuthors(bytes,uint256)": FunctionFragment;
     "uniqueVoters(address)": FunctionFragment;
     "voteToDraft(bytes)": FunctionFragment;
@@ -93,16 +79,20 @@ export interface StoryInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "authorContribCounts"
+      | "bookmark"
+      | "bookmarks"
+      | "cid"
       | "contribute"
       | "contributions"
       | "draftVotes"
       | "getContribution"
-      | "getDraftVotes"
-      | "getStoryDetails"
+      | "getSavedCID"
+      | "getStoryline"
+      | "getStorylineLeader"
+      | "getStorylineTest"
       | "initialContribution"
       | "publishDraft"
       | "publishVotes"
-      | "storyDetails"
       | "uniqueAuthors"
       | "uniqueVoters"
       | "voteToDraft"
@@ -113,6 +103,15 @@ export interface StoryInterface extends utils.Interface {
     functionFragment: "authorContribCounts",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "bookmark",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bookmarks",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(functionFragment: "cid", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "contribute",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
@@ -130,12 +129,20 @@ export interface StoryInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getDraftVotes",
+    functionFragment: "getSavedCID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStoryline",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStoryDetails",
-    values?: undefined
+    functionFragment: "getStorylineLeader",
+    values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStorylineTest",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "initialContribution",
@@ -148,10 +155,6 @@ export interface StoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "publishVotes",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "storyDetails",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "uniqueAuthors",
@@ -174,6 +177,9 @@ export interface StoryInterface extends utils.Interface {
     functionFragment: "authorContribCounts",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "bookmark", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bookmarks", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "cid", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "contribute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contributions",
@@ -185,11 +191,19 @@ export interface StoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getDraftVotes",
+    functionFragment: "getSavedCID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStoryDetails",
+    functionFragment: "getStoryline",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStorylineLeader",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStorylineTest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -202,10 +216,6 @@ export interface StoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "publishVotes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "storyDetails",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -225,29 +235,15 @@ export interface StoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {
-    "storylineEvent(tuple[])": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "storylineEvent"): EventFragment;
+  events: {};
 }
 
-export interface storylineEventEventObject {
-  storyline: SharedStructs.ContributionStructOutput[];
-}
-export type storylineEventEvent = TypedEvent<
-  [SharedStructs.ContributionStructOutput[]],
-  storylineEventEventObject
->;
-
-export type storylineEventEventFilter = TypedEventFilter<storylineEventEvent>;
-
-export interface Story extends BaseContract {
+export interface StoryTest extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: StoryInterface;
+  interface: StoryTestInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -273,6 +269,18 @@ export interface Story extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[number]>;
+
+    bookmark(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    bookmarks(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    cid(overrides?: CallOverrides): Promise<[string]>;
 
     contribute(
       cid: PromiseOrValue<BytesLike>,
@@ -304,19 +312,33 @@ export interface Story extends BaseContract {
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [SharedStructs.ContributionStructOutput] & {
-        contribution: SharedStructs.ContributionStructOutput;
+      [Story.ContributionStructOutput] & {
+        contribution: Story.ContributionStructOutput;
       }
     >;
 
-    getDraftVotes(
+    getSavedCID(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getStorylineLeader(
+      authors: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getStorylineTest(
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[string[]] & { draftVoters: string[] }>;
-
-    getStoryDetails(
-      overrides?: CallOverrides
-    ): Promise<[SharedStructs.StoryDetailsStructOutput]>;
+    ): Promise<
+      [Story.ContributionStructOutput[]] & {
+        storyline: Story.ContributionStructOutput[];
+      }
+    >;
 
     initialContribution(
       overrides?: CallOverrides
@@ -342,17 +364,6 @@ export interface Story extends BaseContract {
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    storyDetails(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string] & {
-        cid: string;
-        title: string;
-        summary: string;
-        genre: string;
-      }
-    >;
 
     uniqueAuthors(
       arg0: PromiseOrValue<BytesLike>,
@@ -380,6 +391,18 @@ export interface Story extends BaseContract {
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<number>;
+
+  bookmark(
+    _cid: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  bookmarks(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  cid(overrides?: CallOverrides): Promise<string>;
 
   contribute(
     cid: PromiseOrValue<BytesLike>,
@@ -410,16 +433,26 @@ export interface Story extends BaseContract {
   getContribution(
     _cid: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
-  ): Promise<SharedStructs.ContributionStructOutput>;
+  ): Promise<Story.ContributionStructOutput>;
 
-  getDraftVotes(
+  getSavedCID(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getStoryline(
+    _cid: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getStorylineLeader(
+    authors: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getStorylineTest(
     _cid: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  getStoryDetails(
-    overrides?: CallOverrides
-  ): Promise<SharedStructs.StoryDetailsStructOutput>;
+  ): Promise<Story.ContributionStructOutput[]>;
 
   initialContribution(
     overrides?: CallOverrides
@@ -445,17 +478,6 @@ export interface Story extends BaseContract {
     arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  storyDetails(
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, string, string] & {
-      cid: string;
-      title: string;
-      summary: string;
-      genre: string;
-    }
-  >;
 
   uniqueAuthors(
     arg0: PromiseOrValue<BytesLike>,
@@ -484,11 +506,23 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
+    bookmark(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    bookmarks(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    cid(overrides?: CallOverrides): Promise<string>;
+
     contribute(
       cid: PromiseOrValue<BytesLike>,
       prevCID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<SharedStructs.ContributionStructOutput>;
+    ): Promise<Story.ContributionStructOutput>;
 
     contributions(
       arg0: PromiseOrValue<BytesLike>,
@@ -513,16 +547,24 @@ export interface Story extends BaseContract {
     getContribution(
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<SharedStructs.ContributionStructOutput>;
+    ): Promise<Story.ContributionStructOutput>;
 
-    getDraftVotes(
+    getSavedCID(overrides?: CallOverrides): Promise<string>;
+
+    getStoryline(
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<string[]>;
+    ): Promise<Story.ContributionStructOutput[]>;
 
-    getStoryDetails(
+    getStorylineLeader(
+      authors: PromiseOrValue<string>[],
       overrides?: CallOverrides
-    ): Promise<SharedStructs.StoryDetailsStructOutput>;
+    ): Promise<string>;
+
+    getStorylineTest(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<Story.ContributionStructOutput[]>;
 
     initialContribution(
       overrides?: CallOverrides
@@ -549,17 +591,6 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    storyDetails(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string] & {
-        cid: string;
-        title: string;
-        summary: string;
-        genre: string;
-      }
-    >;
-
     uniqueAuthors(
       arg0: PromiseOrValue<BytesLike>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -582,16 +613,25 @@ export interface Story extends BaseContract {
     ): Promise<boolean>;
   };
 
-  filters: {
-    "storylineEvent(tuple[])"(storyline?: null): storylineEventEventFilter;
-    storylineEvent(storyline?: null): storylineEventEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     authorContribCounts(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    bookmark(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    bookmarks(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cid(overrides?: CallOverrides): Promise<BigNumber>;
 
     contribute(
       cid: PromiseOrValue<BytesLike>,
@@ -615,12 +655,24 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getDraftVotes(
+    getSavedCID(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getStorylineLeader(
+      authors: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getStorylineTest(
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getStoryDetails(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialContribution(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -635,8 +687,6 @@ export interface Story extends BaseContract {
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    storyDetails(overrides?: CallOverrides): Promise<BigNumber>;
 
     uniqueAuthors(
       arg0: PromiseOrValue<BytesLike>,
@@ -666,6 +716,18 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    bookmark(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    bookmarks(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     contribute(
       cid: PromiseOrValue<BytesLike>,
       prevCID: PromiseOrValue<BytesLike>,
@@ -688,12 +750,24 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getDraftVotes(
+    getSavedCID(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getStorylineLeader(
+      authors: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getStorylineTest(
       _cid: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getStoryDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialContribution(
       overrides?: CallOverrides
@@ -710,8 +784,6 @@ export interface Story extends BaseContract {
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    storyDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     uniqueAuthors(
       arg0: PromiseOrValue<BytesLike>,

@@ -71,22 +71,22 @@ export default function App() {
     }
   }
 
-  async function handleCreateStory(event: any){
-    console.log('creating a story');
-    event.preventDefault();
-    if (contrib) {
-        // TODO: uncomment after testing
-        let curCid = await getCidFromContent(contrib);
-        // TODO: comment after testing
-        // let curCid = "bafybeihtklzuu4smhzvxzadydyc5wa5trv6kgwd5ixko2u6sd6sxmdftpy";
+  // async function handleCreateStory(event: any){
+  //   console.log('creating a story');
+  //   event.preventDefault();
+  //   if (contrib) {
+  //       // TODO: uncomment after testing
+  //       let curCid = await getCidFromContent(contrib);
+  //       // TODO: comment after testing
+  //       // let curCid = "bafybeihtklzuu4smhzvxzadydyc5wa5trv6kgwd5ixko2u6sd6sxmdftpy";
 
-        await ContractGlobal.createStory(curCid);
-        await getStoryContent(curCid);
-        let storyAddr = await ContractGlobal.setStory(curCid);
-        console.log('story found at ' + storyAddr);
-        setStoryAddr(storyAddr);        
-    }
-  }
+  //       await ContractGlobal.createStory(curCid);
+  //       await getStoryContent(curCid);
+  //       let storyAddr = await ContractGlobal.setStory(curCid);
+  //       console.log('story found at ' + storyAddr);
+  //       setStoryAddr(storyAddr);        
+  //   }
+  // }
 
   async function handleContribute(event: any){
     console.log('contributing to a story');
@@ -190,11 +190,11 @@ export default function App() {
           <input type="text" onChange={handleCidChange}/>
           <button type="submit">Retrieve By CID</button> 
         </form>
-        <form onSubmit={handleCreateStory}>
+        {/* <form onSubmit={handleCreateStory}>
           <input type="text" onChange={handleContribChange}/>
           <button type="submit">Create New Story</button>
-        </form>
-        <br/>
+        </form> */}
+        {/* <br/> */}
         <h1>{storyHeader}</h1>
         <div id="storyContent">{storyText}</div>
         <br/>    

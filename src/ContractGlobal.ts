@@ -1,6 +1,7 @@
 import { Contract, ethers } from "ethers";
 
 import StoryDeployed from "./artifacts/contracts/StoryShare.sol/Story.json";
+import GreetDeployed from "./artifacts/contracts/StoryShare.sol/Greeter.json";
 import StoryShareDeployed from "./artifacts/contracts/StoryShare.sol/StoryShare.json";
 import { CID } from 'multiformats/cid'
 
@@ -9,7 +10,7 @@ import { Story } from './typechain-types/StoryShare.sol/Story';
 
 declare var window: any
 
-const SharedStoryContractAddr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const SharedStoryContractAddr = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788";
 
 let signer: ethers.providers.JsonRpcSigner;
 
@@ -27,19 +28,39 @@ class ContractGlobal {
         }
     
         const provider = new ethers.providers.Web3Provider(ethereum);
-
-        signer = provider.getSigner();
+        const signer = provider.getSigner();
 
         this.storyShareContract = new Contract(
-          SharedStoryContractAddr,
-          StoryShareDeployed.abi,
-          signer
-        ) as unknown as StoryShare;
+            SharedStoryContractAddr,
+            StoryShareDeployed.abi,
+            signer
+          ) as unknown as StoryShare;
 
-        // TODO: for testing. comment out later.
-        // this.setStory("bafybeihtklzuu4smhzvxzadydyc5wa5trv6kgwd5ixko2u6sd6sxmdftpy");
+          // TEST CALLS HERE
+          //   this.storyShareContract.getAuthor('0xdD2FD4581271e230360230F9337D5c0430Bf44C0').then(() => console.log('great success'));
     }
     
+    // fetchGreetings = async () => {
+    //     let contractAddress = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788";
+    //     const { ethereum } = window;
+    
+    //     if (!ethereum) {
+    //       alert("Please install MetaMask!");
+    //       return;
+    //     }
+    
+    //     const provider = new ethers.providers.Web3Provider(ethereum);
+    //     const signer = provider.getSigner();
+    //     const contract = new ethers.Contract(
+    //       contractAddress,
+    //       StoryShareDeployed.abi,
+    //       provider
+    //     );
+    
+    //     await contract.getAuthor("0xdD2FD4581271e230360230F9337D5c0430Bf44C0");
+    //     console.log("got author");
+    //   };
+
     // use for retrieval of the CID string when getting from contract
     // const decodedV1 = CID.decode(v1.bytes);    
     convertCidToBytes = (cid: string): Uint8Array => {
@@ -67,47 +88,47 @@ class ContractGlobal {
         }
     }
 
-    setStory = async (cid: string): Promise<string> => {
-        console.log('getting story with CID ' + cid);
-        let cidBytes = this.convertCidToBytes(cid);
-        if (this.storyShareContract){
-            this.StoryContractAddr = await this.storyShareContract.getStoryByCID(cidBytes);
-            console.log("set the story contract:", this.StoryContractAddr);
-            if (this.StoryContractAddr){
-                this.storyContract = new ethers.Contract(
-                    this.StoryContractAddr,
-                    StoryDeployed.abi,
-                    signer
-                  ) as unknown as Story;
-                  if (!this.storyContract){
-                    throw new Error("story contract could not be set from address" + this.StoryContractAddr);
-                }
-            }
-            else {
-                throw new Error("story address is not defined");
-            }
-        }
-        else {
-            throw new Error("storyshare contract is undefined");
-        }
-        return this.StoryContractAddr;
-    };
+    // setStory = async (cid: string): Promise<string> => {
+    //     console.log('getting story with CID ' + cid);
+    //     let cidBytes = this.convertCidToBytes(cid);
+    //     if (this.storyShareContract){
+    //         this.StoryContractAddr = await this.storyShareContract.getStoryByCID(cidBytes);
+    //         console.log("set the story contract:", this.StoryContractAddr);
+    //         if (this.StoryContractAddr){
+    //             this.storyContract = new ethers.Contract(
+    //                 this.StoryContractAddr,
+    //                 StoryDeployed.abi,
+    //                 signer
+    //               ) as unknown as Story;
+    //               if (!this.storyContract){
+    //                 throw new Error("story contract could not be set from address" + this.StoryContractAddr);
+    //             }
+    //         }
+    //         else {
+    //             throw new Error("story address is not defined");
+    //         }
+    //     }
+    //     else {
+    //         throw new Error("storyshare contract is undefined");
+    //     }
+    //     return this.StoryContractAddr;
+    // };
 
-    createStory = async (cid: string): Promise<void> => {          
-        console.log('original CID is ' + cid);
-        let cidBytes = this.convertCidToBytes(cid);
+    // createStory = async (cid: string): Promise<void> => {          
+    //     console.log('original CID is ' + cid);
+    //     let cidBytes = this.convertCidToBytes(cid);
     
-        console.log("creating story ...");
-        if (this.storyShareContract){
-            let tx = await this.storyShareContract.createStory(cidBytes);
-            await tx.wait();
+    //     console.log("creating story ...");
+    //     if (this.storyShareContract){
+    //         let tx = await this.storyShareContract.createStory(cidBytes);
+    //         await tx.wait();
         
-            console.log("tx included");
-        }
-        else {
-            throw new Error("storyshare contract is undefined");
-        }        
-      };
+    //         console.log("tx included");
+    //     }
+    //     else {
+    //         throw new Error("storyshare contract is undefined");
+    //     }        
+    //   };
 }
 
 export default new ContractGlobal();

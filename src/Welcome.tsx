@@ -9,15 +9,20 @@ import Typography from '@mui/material/Typography';
 import { SharedStructs } from './typechain-types/StoryShare.sol/StoryShare';
 import ContractGlobal from './ContractGlobal';
 import { useState, useEffect } from 'react';
+import { BytesLike, ethers } from 'ethers';
 
 const Welcome = () => {
     const [storyDetailsArr, setStoryDetailsArr] = useState<SharedStructs.StoryDetailsStructOutput[]>([])
 
     useEffect(() => {
-        ContractGlobal.storyShareContract?.getStoryDetails().then((storyDetailsRes) => 
-        setStoryDetailsArr(storyDetailsRes)
-        )
-    }, []);
+        if (ContractGlobal.storyShareContract) {
+            ContractGlobal.storyShareContract.getStoryDetails().then((storyDetailsRes) => setStoryDetailsArr(storyDetailsRes));
+        }
+    }, [ContractGlobal.storyShareContract]);
+
+    function stringifyGenre(genreBytes: BytesLike): string {
+        return ethers.utils.parseBytes32String(genreBytes);
+    }
 
     return (
         <Box maxWidth={1000} margin='auto'>
@@ -31,7 +36,7 @@ const Welcome = () => {
                                 {storyDetails.title}
                                 </Typography>
                                 <Typography variant="h5" component="div">
-                                {storyDetails.genre}
+                                {stringifyGenre(storyDetails.genre)}
                                 </Typography>
                                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
                                 {storyDetails.summary}
