@@ -9,11 +9,14 @@ import Paper from '@mui/material/Paper';
 
 import { Button, Grid, TextField } from '@mui/material';
 import { useState } from 'react';
+import ContractGlobal from './ContractGlobal';
+import Web3Global from './Web3Global';
 
 const Create = () => {
     const [title, setTitle] = useState('')
     const [genre, setGenre] = useState('Thriller');
     const [summary, setSummary] = useState('');
+
     function handleTitleChange(event: any){
         setTitle(event.target.value)
     }
@@ -26,8 +29,32 @@ const Create = () => {
         setSummary(event.target.value)
     }
 
-    function onCreateStory(event: any) {
-        // TODO: create story
+    function createInitialContrib(): string {
+        return `Summary \n ${summary}`;
+    }
+    
+    async function onCreateStory(event: any) {
+        event.preventDefault();
+        // TODO: get contribution from fields
+        const initialContrib = createInitialContrib();
+        let curCid = await Web3Global.getCidFromContent(initialContrib, title);
+        if (curCid) {
+            let cidBytes = ContractGlobal.convertCidToBytes(curCid);
+            console.log("creating story ...");
+            if (ContractGlobal.storyShareContract){
+                let tx = await ContractGlobal.storyShareContract.createStory(cidBytes, title, summary, genre);
+                await tx.wait();
+            
+                console.log("tx included");
+            }
+            else {
+                throw new Error("storyshare contract is undefined");
+            }  
+        }
+    }
+
+    function isStoryTextSet(): boolean{
+        return title.length > 0 && genre.length > 0 && summary.length > 0;
     }
 
     return (
@@ -81,6 +108,7 @@ const Create = () => {
                     <Button
                         id="outlined-multiline-flexible"
                         onClick={onCreateStory}
+                        disabled={isStoryTextSet()}
                     >
                         Create
                     </Button>                

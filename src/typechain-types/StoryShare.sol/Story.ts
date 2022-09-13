@@ -1,0 +1,1 @@
+/Users/edwardcox/crypto/encode/hacksafari/story_hat_backend/typechain-types/StoryShare.sol/Story.ts

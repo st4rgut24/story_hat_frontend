@@ -17,7 +17,6 @@ export default function App() {
   const [storyHeader, setStoryHeader] = useState(DEFAULT_STORY_HEADER);
   const [storyText, setStoryText] = useState("")
 
-  // const [file, setFile] = useState()
   const [cid, setCid] = useState("")
   const [contrib, setContrib] = useState()
   const [storyAddr, setStoryAddr] = useState("")
@@ -26,10 +25,6 @@ export default function App() {
   useEffect(() => {
     connectWallet();
   }, []);
-
-  // function handleUploadChange(event: any) {
-  //   setFile(event.target.files[0])
-  // }
 
   function handleContribChange(event: any) {
     setContrib(event.target.value);
@@ -122,20 +117,6 @@ export default function App() {
     }
   }
 
-  // function handlePostWeb3(event: any) {
-  //   console.log('submitting file');
-  //   event.preventDefault();
-  //   if (file){
-  //     storeFiles([file]);
-  //   }
-  //   else {
-  //     console.error("no file was chosen for submission");
-  //   }
-  // }
-
-  // call after creating a story
-  // call after contributing to a story
-  // call after retrieving an existing contribution
   function handleGetContent(event: any) {
     console.log('retrieving a file with cid', cid);
     event.preventDefault();
@@ -223,16 +204,6 @@ export default function App() {
           <br/>
           <button type="submit" disabled={storyAddr.length === 0}>Contribute</button>
         </form>              
-        {/* <form onSubmit={handlePostWeb3}>
-          <h1>Upload File</h1>
-          <input type="file" onChange={handleUploadChange}/>
-          <button type="submit">Upload</button>
-        </form>
-        <br/> */}
-        {/* <h1>Set CID to Contribute To</h1>
-        <input type="text" onChange={handleCidChange}/>
-        <br/> */}
-        <br/>
         <br/>
         <form onSubmit={handleGetStatus}>
           <h3>Retrieve Status From CID</h3>

@@ -1,14 +1,17 @@
-import { Button, Grid, IconButton, TextField } from '@mui/material';
+import { Grid, IconButton, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 import ContributionInput from './ContributionInput';
 import ContributionNav from './ContributionNav';
-import ContributionTree from './ContributionTree';
 
 const Contribution = () => {
+    const [listView, setListView] = useState<boolean>(true);
+
     const [next, setNext] = useState(-1)
     const [prev, setPrev] = useState(-1)
 
@@ -20,17 +23,41 @@ const Contribution = () => {
         // TODO
     }
 
+    const handleToggle = (
+        event: React.MouseEvent<HTMLElement>,
+        isListView: boolean,
+      ) => {
+        setPrev(-1);
+        setNext(-1);
+        setListView(isListView);
+    };    
+
     return (
         <Box maxWidth={1000} margin='auto'>
             <Grid container spacing={1}>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                     <h1>Contribute</h1>
                 </Grid>
+                <Grid item xs={6} container justifyContent="flex-end" marginTop="2%">
+                    <ToggleButtonGroup
+                        value={listView}
+                        exclusive
+                        onChange={handleToggle}
+                        aria-label="view toggle"
+                    >
+                        <ToggleButton value={true} aria-label="listOn">
+                        <FormatListBulletedIcon />
+                        </ToggleButton>
+                        <ToggleButton value={false} aria-label="treeOn">
+                        <AccountTreeIcon />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Grid>                
                 <Grid item xs={6}>
                     <ContributionInput/>
                 </Grid>
                 <Grid item xs={6}>
-                    <ContributionNav setNext={setNext} setPrev={setPrev}/>
+                    <ContributionNav setNext={setNext} setPrev={setPrev} listView={listView}/>
                 </Grid>  
                 <Grid item xs={6}>
                     <IconButton

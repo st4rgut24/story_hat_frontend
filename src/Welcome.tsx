@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, TextField } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -6,43 +6,43 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-const bull = (
-    <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-      •
-    </Box>
-  );
+import { SharedStructs } from './typechain-types/StoryShare.sol/StoryShare';
+import ContractGlobal from './ContractGlobal';
+import { useState, useEffect } from 'react';
 
 const Welcome = () => {
+    const [storyDetailsArr, setStoryDetailsArr] = useState<SharedStructs.StoryDetailsStructOutput[]>([])
+
+    useEffect(() => {
+        ContractGlobal.storyShareContract?.getStoryDetails().then((storyDetailsRes) => 
+        setStoryDetailsArr(storyDetailsRes)
+        )
+    }, []);
+
     return (
         <Box maxWidth={1000} margin='auto'>
             <br/>
             <Grid container spacing={1}>
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((value) => 
-                <Grid item xs={4}>
-                    <Card sx={{ minWidth: 275 }}>
-                        <CardContent>
-                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            Story
-                            </Typography>
-                            <Typography variant="h5" component="div">
-                            The Mythic Lizard
-                            </Typography>
-                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            by Andrew Dillard
-                            </Typography>
-                            <Typography variant="body2">
-                            Fantasy
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button size="small">Read</Button>
-                        </CardActions>
-                    </Card>                    
-                </Grid> 
-                )}
+                {storyDetailsArr.map((storyDetails) => 
+                    <Grid item xs={4}>
+                        <Card sx={{ minWidth: 275 }}>
+                            <CardContent>
+                                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                {storyDetails.title}
+                                </Typography>
+                                <Typography variant="h5" component="div">
+                                {storyDetails.genre}
+                                </Typography>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                {storyDetails.summary}
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button size="small">Read</Button>
+                            </CardActions>
+                        </Card>                    
+                    </Grid> 
+                    )}
             </Grid>
         </Box>
     );

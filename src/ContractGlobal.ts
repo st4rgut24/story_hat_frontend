@@ -1,19 +1,23 @@
-import Story from "./artifacts/contracts/StoryShare.sol/Story.json";
-import StoryShare from "./artifacts/contracts/StoryShare.sol/StoryShare.json";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
+
+import StoryDeployed from "./artifacts/contracts/StoryShare.sol/Story.json";
+import StoryShareDeployed from "./artifacts/contracts/StoryShare.sol/StoryShare.json";
 import { CID } from 'multiformats/cid'
+
+import { StoryShare } from './typechain-types/StoryShare.sol/StoryShare';
+import { Story } from './typechain-types/StoryShare.sol/Story';
 
 declare var window: any
 
-const SharedStoryContractAddr = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+const SharedStoryContractAddr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
-let storyShareContract: ethers.Contract;
 let signer: ethers.providers.JsonRpcSigner;
 
-let StoryContractAddr: string; // address of the story contract
-let storyContract: ethers.Contract;
-
 class ContractGlobal {
+    storyShareContract: StoryShare | undefined;
+    StoryContractAddr: string | undefined; // address of the story contract
+    storyContract: Story | undefined;
+
     constructor(){
         const { ethereum } = window;
     
@@ -25,11 +29,12 @@ class ContractGlobal {
         const provider = new ethers.providers.Web3Provider(ethereum);
 
         signer = provider.getSigner();
-        storyShareContract = new ethers.Contract(
+
+        this.storyShareContract = new Contract(
           SharedStoryContractAddr,
-          StoryShare.abi,
+          StoryShareDeployed.abi,
           signer
-        );
+        ) as unknown as StoryShare;
 
         // TODO: for testing. comment out later.
         // this.setStory("bafybeihtklzuu4smhzvxzadydyc5wa5trv6kgwd5ixko2u6sd6sxmdftpy");
@@ -55,26 +60,37 @@ class ContractGlobal {
         let prevCidBytes = this.convertCidToBytes(prevCid);
         let cidBytes = this.convertCidToBytes(cid);
         console.log("contributing story ...");
-        let tx = await storyContract.connect(signer).contribute(cidBytes, prevCidBytes);
-        await tx.wait();
-        console.log("tx included");
+        if (this.storyContract){
+            let tx = await this.storyContract.contribute(cidBytes, prevCidBytes);
+            await tx.wait();
+            console.log("tx included");
+        }
     }
 
     setStory = async (cid: string): Promise<string> => {
         console.log('getting story with CID ' + cid);
         let cidBytes = this.convertCidToBytes(cid);
-        StoryContractAddr = await storyShareContract.connect(signer).getStoryByCID(cidBytes);
-        console.log("set the story contract:", StoryContractAddr);
-
-        storyContract = new ethers.Contract(
-            StoryContractAddr,
-            Story.abi,
-            signer
-          );
-        if (!storyContract){
-            throw new Error("story contract could not be set from address" + StoryContractAddr);
+        if (this.storyShareContract){
+            this.StoryContractAddr = await this.storyShareContract.getStoryByCID(cidBytes);
+            console.log("set the story contract:", this.StoryContractAddr);
+            if (this.StoryContractAddr){
+                this.storyContract = new ethers.Contract(
+                    this.StoryContractAddr,
+                    StoryDeployed.abi,
+                    signer
+                  ) as unknown as Story;
+                  if (!this.storyContract){
+                    throw new Error("story contract could not be set from address" + this.StoryContractAddr);
+                }
+            }
+            else {
+                throw new Error("story address is not defined");
+            }
         }
-        return StoryContractAddr;
+        else {
+            throw new Error("storyshare contract is undefined");
+        }
+        return this.StoryContractAddr;
     };
 
     createStory = async (cid: string): Promise<void> => {          
@@ -82,10 +98,15 @@ class ContractGlobal {
         let cidBytes = this.convertCidToBytes(cid);
     
         console.log("creating story ...");
-        let tx = await storyShareContract.connect(signer).createStory(cidBytes);
-        await tx.wait();
-    
-        console.log("tx included");
+        if (this.storyShareContract){
+            let tx = await this.storyShareContract.createStory(cidBytes);
+            await tx.wait();
+        
+            console.log("tx included");
+        }
+        else {
+            throw new Error("storyshare contract is undefined");
+        }        
       };
 }
 
