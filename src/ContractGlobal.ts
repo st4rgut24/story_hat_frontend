@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers";
+import { BytesLike, Contract, ethers } from "ethers";
 
 import StoryDeployed from "./artifacts/contracts/StoryShare.sol/Story.json";
 import GreetDeployed from "./artifacts/contracts/StoryShare.sol/Greeter.json";
@@ -82,7 +82,7 @@ class ContractGlobal {
      * 
      * @param cid the unique id of a contribution in this story
      */
-    setStory = async (cid: string): Promise<void> => {
+    setStory = async (cid: BytesLike): Promise<void> => {
         console.log('getting story with CID ' + cid);
         if (this.storyShareContract){
             this.StoryContractAddr = await this.storyShareContract.getStoryByCID(cid);

@@ -14,17 +14,30 @@ const ContributionInput = (props: any) => {
        }).catch((error: Error) => setPrevContribution("Error:" + error.message));
     }, [])
 
+    function resetContribution() {
+        setContribution("");
+    }
+
     function handleContribute(event: any) {
         setContribution(event.target.value);
     }
 
     function onContributeSubmit(event: any) {
-        // TODO contribute()
+        console.log("submitting contribution ...");
         Web3Global.getCidFromContent(contribution, props.prevCID).then((curCID: string) => {
-            ContractGlobal.storyContract?.contribute(curCID, props.prevCID).then((tx) => {
+            console.log(`contribution cid ${curCID} to prev cid ${props.prevCID}`);
+            const curCidBytes = Web3Global.convertCidToBytes(curCID);
+            const prevCIDBytes = Web3Global.convertCidToBytes(props.prevCID); 
+            ContractGlobal.storyContract?.contribute(curCidBytes, prevCIDBytes).then((tx) => {
                 tx.wait().then(() => {
-                    console.log("new contribution has been added");
-                    props.setCID(curCID);
+                    console.log("new contribution has been added setting cid to", curCID);
+                    Web3Global.getStoryContent(curCID).then((updatedPrev) => {
+                        console.log("updating the previous contrib to ", updatedPrev);
+                        setPrevContribution(updatedPrev);
+                        resetContribution();
+                        console.log("updating current cid to", curCID);
+                        props.setCID(curCID);
+                    });
                 })
             })
         })
@@ -59,6 +72,7 @@ const ContributionInput = (props: any) => {
                 <Button
                     id="outlined-multiline-flexible"
                     onClick={onContributeSubmit}
+                    disabled={contribution.length === 0}
                 >
                     Contribute
                 </Button>                

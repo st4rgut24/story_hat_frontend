@@ -58,10 +58,8 @@ class Web3Global {
     }
 
   // retrieve the contents of a contribution using its CID 
-  getStoryContent  = async (cidHexStr: string): Promise<string> => {
+  getStoryContent  = async (cid: string): Promise<string> => {
     if (this.web3Storage) {
-      const cid = this.convertBytesToCid(cidHexStr);
-      console.log("decoded cid is", cid);
       const res = await this.web3Storage.get(cid)
       if (res) {
         console.log(`Got a response! [${res.status}] ${res.statusText}`);

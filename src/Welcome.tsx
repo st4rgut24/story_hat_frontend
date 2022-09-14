@@ -10,6 +10,7 @@ import { SharedStructs } from './typechain-types/StoryShare.sol/StoryShare';
 import ContractGlobal from './ContractGlobal';
 import { useState, useEffect } from 'react';
 import { BytesLike, ethers } from 'ethers';
+import Web3Global from './Web3Global';
 
 const Welcome = (props: any) => {
     const [storyDetailsArr, setStoryDetailsArr] = useState<SharedStructs.StoryDetailsStructOutput[]>([])
@@ -24,8 +25,11 @@ const Welcome = (props: any) => {
         return ethers.utils.parseBytes32String(genreBytes);
     }
 
-    function handleClickStory(cid: string): void {
-        props.setChosenCID(cid);
+    function handleClickStory(cidBytes: string): void {
+        ContractGlobal.setStory(cidBytes).then(() => {
+            const storyRootCID = Web3Global.convertBytesToCid(cidBytes);
+            props.setChosenCID(storyRootCID);
+        });
     }
 
     return (

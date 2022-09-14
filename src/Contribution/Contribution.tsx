@@ -11,6 +11,7 @@ import ContributionNav from './ContributionNav';
 import ContractGlobal from '../ContractGlobal';
 
 import { SharedStructs } from '../typechain-types/StoryShare.sol/Story';
+import Web3Global from '../Web3Global';
 
 const Contribution = (props: any) => {
     const [listView, setListView] = useState<boolean>(true);
@@ -24,12 +25,13 @@ const Contribution = (props: any) => {
 
     useEffect(() => {
         if (ContractGlobal.storyShareContract && curCID.length > 0) {
-            ContractGlobal.setStory(curCID).then(() => {
-                console.log("great success set story yay");
-                if (ContractGlobal.storyContract){
-                    ContractGlobal.storyContract.getContribution(curCID).then((contrib) => setContribution(contrib));
-                }
-            });
+            const cidBytes = Web3Global.convertCidToBytes(curCID);
+            if (ContractGlobal.storyContract){
+                ContractGlobal.storyContract.getContribution(cidBytes).then((contrib) => {
+                    console.log("great success set new contrib to cid", curCID);
+                    setContribution(contrib)
+                });
+            }
         }
     }, [curCID]);
 
