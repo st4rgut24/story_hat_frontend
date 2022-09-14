@@ -9,7 +9,7 @@ import { Story } from './typechain-types/StoryShare.sol/Story';
 
 declare var window: any
 
-const SharedStoryContractAddr = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
+const SharedStoryContractAddr = "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1";
 
 let signer: ethers.providers.JsonRpcSigner;
 

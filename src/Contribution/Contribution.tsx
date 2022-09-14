@@ -31,7 +31,9 @@ const Contribution = (props: any) => {
                     console.log("great success set new contrib to cid", props.curCID);
                     setContribution(contrib);
                     const curBytesCID = Web3Global.convertCidToBytes(props.curCID);
+                    console.log("getting storyline ...");
                     ContractGlobal.storyContract?.getStoryline(curBytesCID).then((storyline) => {
+                        console.log("got storyline", storyline);
                         setStoryline(storyline);
                     });
                 });

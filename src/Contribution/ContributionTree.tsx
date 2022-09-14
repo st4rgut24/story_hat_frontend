@@ -6,6 +6,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { SharedStructs } from '../typechain-types/StoryShare.sol/Story';
 import { useEffect, useState } from 'react';
+import Web3Global from '../Web3Global';
+import { isArray } from 'util';
 
 interface RenderTree {
   id: string;
@@ -15,6 +17,10 @@ interface RenderTree {
 
 export default function ContributionTree(props: any) {
 
+  const [rootNode, setRootNode] = useState<RenderTree>()
+  const [nodeIds, setNodeIds] = useState<string[]>([])
+  const [selection, setSelection] = useState<string>("");
+
   useEffect(() => {
     if (props.storyline){
       const rootNode = createRenderTree(props.storyline);
@@ -22,7 +28,13 @@ export default function ContributionTree(props: any) {
     }
   }, [props.storyline])
 
-  const [rootNode, setRootNode] = useState<RenderTree>()
+  function handleNodeSelect(event: any, nodeIds: Array<string> | string){
+    const firstNodeId = isArray(nodeIds) ? nodeIds[0] : nodeIds;
+    console.log("first node id", firstNodeId);
+    const selectedCID = Web3Global.convertBytesToCid(firstNodeId);
+    console.log('set cid to selection', selectedCID);
+    props.setCID(selectedCID);
+}
 
   // from list of contributions in a storyline create the tree representation fo the story
   const createRenderTree = (storyline: SharedStructs.ContributionStructOutput[]): RenderTree => {
@@ -45,8 +57,9 @@ export default function ContributionTree(props: any) {
             id: finalContrib.nextCIDs[j],
           })
         }
+        setSelection(node.id); // set the current cid
         node.children = nextNodes;
-      }      
+      }
       // assign a node as the child of previous node
       if (TreeNodeArr.length > 0){
         const prevNode: RenderTree = TreeNodeArr[i-1];
@@ -54,6 +67,8 @@ export default function ContributionTree(props: any) {
       }
       TreeNodeArr.push(node);
     }
+    const nodeIdArr = TreeNodeArr.map((treeNode) => treeNode.id);
+    setNodeIds(nodeIdArr);
     return TreeNodeArr?.[0];
   }
 
@@ -69,11 +84,13 @@ export default function ContributionTree(props: any) {
     <TreeView
       aria-label="rich object"
       defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpanded={['root']}
+      expanded={nodeIds}
       defaultExpandIcon={<ChevronRightIcon />}
+      onNodeSelect={handleNodeSelect}
+      selected={selection}
       sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
     >
-      {rootNode ? renderTree(rootNode) : undefined}
+      {rootNode ? renderTree(rootNode): undefined}
     </TreeView>
   );
 }

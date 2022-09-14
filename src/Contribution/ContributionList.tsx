@@ -45,19 +45,19 @@ export default function ContributionList(props: any) {
       if (prevContribCID === EMPTY_CID){ // root cid (no prev cid)
         setPrevContribHeaderIdx(-1);
         setNextContribHeaderIdx(0);
-        linkedCidArr.splice(nextContribHeaderIdx, 0, "");
+        linkedCidArr.splice(0, 0, "");
       }
       else if (linkedCidArr.length === 1) { // one node deep (has prev cid but no next cids)
         setPrevContribHeaderIdx(0);
         setNextContribHeaderIdx(-1);
-        linkedCidArr.splice(prevContribHeaderIdx, 0, "");
+        linkedCidArr.splice(0, 0, "");
 
       }
       else { // has prev and next nodes
         setPrevContribHeaderIdx(0);
-        setNextContribHeaderIdx(1);
-        linkedCidArr.splice(nextContribHeaderIdx, 0, "");
-        linkedCidArr.splice(prevContribHeaderIdx, 0, "");
+        setNextContribHeaderIdx(2);
+        linkedCidArr.splice(0, 0, "");
+        linkedCidArr.splice(2, 0, "");
       }  
     }  
   }
