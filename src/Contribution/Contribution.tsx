@@ -77,7 +77,7 @@ const Contribution = (props: any) => {
                     <ContributionInput setCID={setCurCID} prevCID={props.chosenCID} />
                 </Grid>
                 <Grid item xs={6}>
-                    <ContributionNav contribution={contribution} setNext={setNext} setPrev={setPrev} listView={listView}/>
+                    <ContributionNav setCID={setCurCID} contribution={contribution} setNext={setNext} setPrev={setPrev} listView={listView}/>
                 </Grid>  
                 <Grid item xs={6}>
                     <IconButton
