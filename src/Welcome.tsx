@@ -28,7 +28,7 @@ const Welcome = (props: any) => {
     function handleClickStory(cidBytes: string): void {
         ContractGlobal.setStory(cidBytes).then(() => {
             const storyRootCID = Web3Global.convertBytesToCid(cidBytes);
-            props.setChosenCID(storyRootCID);
+            props.setCurCID(storyRootCID);
         });
     }
 

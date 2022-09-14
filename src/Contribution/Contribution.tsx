@@ -19,21 +19,25 @@ const Contribution = (props: any) => {
     const [next, setNext] = useState(-1)
     const [prev, setPrev] = useState(-1)
 
-    const [curCID, setCurCID] = useState(props.chosenCID);
+    const [storyline, setStoryline] = useState<SharedStructs.ContributionStructOutput[]>([]);
 
     const [contribution, setContribution] = useState<SharedStructs.ContributionStructOutput>();
 
     useEffect(() => {
-        if (ContractGlobal.storyShareContract && curCID.length > 0) {
-            const cidBytes = Web3Global.convertCidToBytes(curCID);
+        if (ContractGlobal.storyShareContract && props.curCID.length > 0) {
+            const cidBytes = Web3Global.convertCidToBytes(props.curCID);
             if (ContractGlobal.storyContract){
                 ContractGlobal.storyContract.getContribution(cidBytes).then((contrib) => {
-                    console.log("great success set new contrib to cid", curCID);
-                    setContribution(contrib)
+                    console.log("great success set new contrib to cid", props.curCID);
+                    setContribution(contrib);
+                    const curBytesCID = Web3Global.convertCidToBytes(props.curCID);
+                    ContractGlobal.storyContract?.getStoryline(curBytesCID).then((storyline) => {
+                        setStoryline(storyline);
+                    });
                 });
             }
         }
-    }, [curCID]);
+    }, [props.curCID]);
 
     function onGetNextContrib(event: any) {
         // TODO
@@ -74,10 +78,10 @@ const Contribution = (props: any) => {
                     </ToggleButtonGroup>
                 </Grid>                
                 <Grid item xs={6}>
-                    <ContributionInput setCID={setCurCID} prevCID={props.chosenCID} />
+                    <ContributionInput setCID={props.setCurCID} curCID={props.curCID} />
                 </Grid>
                 <Grid item xs={6}>
-                    <ContributionNav setCID={setCurCID} contribution={contribution} setNext={setNext} setPrev={setPrev} listView={listView}/>
+                    <ContributionNav setCID={props.setCurCID} contribution={contribution} storyline={storyline} setNext={setNext} setPrev={setPrev} listView={listView}/>
                 </Grid>  
                 <Grid item xs={6}>
                     <IconButton

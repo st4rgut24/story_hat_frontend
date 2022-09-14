@@ -80,6 +80,7 @@ export interface StoryInterface extends utils.Interface {
     "getContribution(bytes)": FunctionFragment;
     "getDraftVotes(bytes)": FunctionFragment;
     "getStoryDetails()": FunctionFragment;
+    "getStoryline(bytes)": FunctionFragment;
     "initialContribution()": FunctionFragment;
     "publishDraft(bytes,bytes)": FunctionFragment;
     "publishVotes(bytes,uint256)": FunctionFragment;
@@ -99,6 +100,7 @@ export interface StoryInterface extends utils.Interface {
       | "getContribution"
       | "getDraftVotes"
       | "getStoryDetails"
+      | "getStoryline"
       | "initialContribution"
       | "publishDraft"
       | "publishVotes"
@@ -136,6 +138,10 @@ export interface StoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getStoryDetails",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStoryline",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "initialContribution",
@@ -190,6 +196,10 @@ export interface StoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getStoryDetails",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStoryline",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -318,6 +328,15 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[SharedStructs.StoryDetailsStructOutput]>;
 
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [SharedStructs.ContributionStructOutput[]] & {
+        storyline: SharedStructs.ContributionStructOutput[];
+      }
+    >;
+
     initialContribution(
       overrides?: CallOverrides
     ): Promise<
@@ -420,6 +439,11 @@ export interface Story extends BaseContract {
   getStoryDetails(
     overrides?: CallOverrides
   ): Promise<SharedStructs.StoryDetailsStructOutput>;
+
+  getStoryline(
+    _cid: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<SharedStructs.ContributionStructOutput[]>;
 
   initialContribution(
     overrides?: CallOverrides
@@ -524,6 +548,11 @@ export interface Story extends BaseContract {
       overrides?: CallOverrides
     ): Promise<SharedStructs.StoryDetailsStructOutput>;
 
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<SharedStructs.ContributionStructOutput[]>;
+
     initialContribution(
       overrides?: CallOverrides
     ): Promise<
@@ -622,6 +651,11 @@ export interface Story extends BaseContract {
 
     getStoryDetails(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialContribution(overrides?: CallOverrides): Promise<BigNumber>;
 
     publishDraft(
@@ -694,6 +728,11 @@ export interface Story extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getStoryDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStoryline(
+      _cid: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     initialContribution(
       overrides?: CallOverrides

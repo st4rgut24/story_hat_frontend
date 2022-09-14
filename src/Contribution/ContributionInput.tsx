@@ -6,28 +6,28 @@ import Web3Global from '../Web3Global';
 const ContributionInput = (props: any) => {
 
     const [prevContribution, setPrevContribution] = useState("An example story you wish to contribute to");
-    const [contribution, setContribution] = useState("");
+    const [nextContribution, setNextContribution] = useState("");
 
     useEffect(() => {
-       Web3Global.getStoryContent(props.prevCID).then((storyContent: string) => {
+       Web3Global.getStoryContent(props.curCID).then((storyContent: string) => {
             setPrevContribution(storyContent);
        }).catch((error: Error) => setPrevContribution("Error:" + error.message));
-    }, [])
+    }, [props.curCID])
 
     function resetContribution() {
-        setContribution("");
+        setNextContribution("");
     }
 
     function handleContribute(event: any) {
-        setContribution(event.target.value);
+        setNextContribution(event.target.value);
     }
 
     function onContributeSubmit(event: any) {
         console.log("submitting contribution ...");
-        Web3Global.getCidFromContent(contribution, props.prevCID).then((curCID: string) => {
-            console.log(`contribution cid ${curCID} to prev cid ${props.prevCID}`);
+        Web3Global.getCidFromContent(nextContribution, props.curCID).then((curCID: string) => {
+            console.log(`contribution cid ${curCID} to prev cid ${props.curCID}`);
             const curCidBytes = Web3Global.convertCidToBytes(curCID);
-            const prevCIDBytes = Web3Global.convertCidToBytes(props.prevCID); 
+            const prevCIDBytes = Web3Global.convertCidToBytes(props.curCID); 
             ContractGlobal.storyContract?.contribute(curCidBytes, prevCIDBytes).then((tx) => {
                 tx.wait().then(() => {
                     console.log("new contribution has been added setting cid to", curCID);
@@ -59,11 +59,11 @@ const ContributionInput = (props: any) => {
             <Grid item xs={12}>
                 <TextField
                     id="outlined-multiline-flexible"
-                    label="contribution"
+                    label="Add to the Story"
                     fullWidth
                     multiline
                     minRows={10}
-                    value={contribution}
+                    value={nextContribution}
                     onChange={handleContribute}
                     margin="normal"
                 />                
@@ -72,7 +72,7 @@ const ContributionInput = (props: any) => {
                 <Button
                     id="outlined-multiline-flexible"
                     onClick={onContributeSubmit}
-                    disabled={contribution.length === 0}
+                    disabled={nextContribution.length === 0}
                 >
                     Contribute
                 </Button>                

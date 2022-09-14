@@ -16,10 +16,8 @@ const EMPTY_CID = "0x";
 export default function ContributionList(props: any) {
   const [linkedCids, setLinkedCids] = useState<any[]>([]); // array of strings
 
-  const [prevContribHeaderIdx, setPrevContribHeaderIdx] = useState(0);
-  const [nextContribHeaderIdx, setNextContribHeaderIdx] = useState(0);
-
-  const [poo, setPoo] = useState(1);
+  const [prevContribHeaderIdx, setPrevContribHeaderIdx] = useState(-1);
+  const [nextContribHeaderIdx, setNextContribHeaderIdx] = useState(-1);
 
   useEffect(() => {
   }, [])
@@ -42,17 +40,26 @@ export default function ContributionList(props: any) {
   }, [props.contribution])
 
   const setContribHeaderIdx = (prevContribCID: string, linkedCidArr: string[]) =>  {
-    if (prevContribCID === EMPTY_CID){
-      setPrevContribHeaderIdx(-1);
-      setNextContribHeaderIdx(0);
-      linkedCidArr.splice(nextContribHeaderIdx, 0, "");
-    }
-    else {
-      setPrevContribHeaderIdx(0);
-      setNextContribHeaderIdx(1);
-      linkedCidArr.splice(nextContribHeaderIdx, 0, "");
-      linkedCidArr.splice(prevContribHeaderIdx, 0, "");
-    }    
+    // if not a newly created story and there are contributions
+    if (linkedCidArr.length > 0) {
+      if (prevContribCID === EMPTY_CID){ // root cid (no prev cid)
+        setPrevContribHeaderIdx(-1);
+        setNextContribHeaderIdx(0);
+        linkedCidArr.splice(nextContribHeaderIdx, 0, "");
+      }
+      else if (linkedCidArr.length === 1) { // one node deep (has prev cid but no next cids)
+        setPrevContribHeaderIdx(0);
+        setNextContribHeaderIdx(-1);
+        linkedCidArr.splice(prevContribHeaderIdx, 0, "");
+
+      }
+      else { // has prev and next nodes
+        setPrevContribHeaderIdx(0);
+        setNextContribHeaderIdx(1);
+        linkedCidArr.splice(nextContribHeaderIdx, 0, "");
+        linkedCidArr.splice(prevContribHeaderIdx, 0, "");
+      }  
+    }  
   }
 
   const handleListItemClick = (

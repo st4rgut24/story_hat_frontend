@@ -11,7 +11,7 @@ import Welcome from "./Welcome";
 declare var window: any
 
 const DEFAULT_STORY_HEADER = "Create a new story or contribute to an existing one";
-export const CONTRIBUTE_PAGE = "Contribute";
+  export const CONTRIBUTE_PAGE = "Contribute";
 
 export default function App() {
 
@@ -22,7 +22,7 @@ export default function App() {
   const [contrib, setContrib] = useState()
   const [storyAddr, setStoryAddr] = useState("")
   const [page, setPage] = useState("Welcome")
-  const [chosenCID, setChosenCID] = useState("")
+  const [curCID, setCurCID] = useState("");
 
 
   useEffect(() => {
@@ -30,10 +30,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (chosenCID !== ""){
+    if (curCID !== ""){
       setPage(CONTRIBUTE_PAGE);
     }
-  }, [chosenCID]);  
+  }, [curCID]);  
 
   function handleContribChange(event: any) {
     setContrib(event.target.value);
@@ -191,9 +191,9 @@ export default function App() {
   return (
     <div className="App">
         <Header setPage={setPage}/>
-        {page==="Welcome" && <Welcome setChosenCID={setChosenCID}/>}
+        {page==="Welcome" && <Welcome setCurCID={setCurCID}/>}
         {page==="Create" && <Create/>}
-        {page===CONTRIBUTE_PAGE && <Contribution chosenCID={chosenCID}/>}
+        {page===CONTRIBUTE_PAGE && <Contribution setCurCID={setCurCID} curCID={curCID}/>}
 
         <form onSubmit={handleGetContent}>
           <input type="text" onChange={handleCidChange}/>
