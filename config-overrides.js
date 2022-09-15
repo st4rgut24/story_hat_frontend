@@ -1,16 +1,18 @@
-module.exports = function override (config, env) {
-    console.log('override')
-    let loaders = config.resolve
-    loaders.fallback = {
-        // existing configs...
-        "fs": false,
-        "os": require.resolve("os-browserify/browser"),
-        "path": require.resolve("path-browserify"),     
-        'stream': require.resolve('stream-browserify'),
-        'buffer': require.resolve('buffer/'),
-        'util': require.resolve('util/'),
-        'assert': require.resolve('assert/')      
-   }
-    
-    return config
+/* config-overrides.js */
+const webpack = require('webpack');
+module.exports = function override(config, env) {
+    config.resolve.fallback = {
+        util: require.resolve('util/'),
+        url: require.resolve('url'),
+        assert: require.resolve('assert'),
+        buffer: require.resolve('buffer'),
+    };
+    config.plugins.push(
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+            Buffer: ['buffer', 'Buffer'],
+        }),
+    );
+
+    return config;
 }
