@@ -18,7 +18,7 @@ const Contribution = (props: any) => {
 
     const [next, setNext] = useState(-1)
     const [prev, setPrev] = useState(-1)
-
+    
     const [storyline, setStoryline] = useState<SharedStructs.ContributionStructOutput[]>([]);
 
     const [contribution, setContribution] = useState<SharedStructs.ContributionStructOutput>();
@@ -80,7 +80,7 @@ const Contribution = (props: any) => {
                     </ToggleButtonGroup>
                 </Grid>                
                 <Grid item xs={6}>
-                    <ContributionInput setCID={props.setCurCID} curCID={props.curCID} />
+                    <ContributionInput setCID={props.setCurCID} curCID={props.curCID} setIsLoading={props.setIsLoading} />
                 </Grid>
                 <Grid item xs={6}>
                     <ContributionNav setCID={props.setCurCID} contribution={contribution} storyline={storyline} setNext={setNext} setPrev={setPrev} listView={listView}/>

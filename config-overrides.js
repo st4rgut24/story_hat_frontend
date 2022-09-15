@@ -5,7 +5,11 @@ module.exports = function override (config, env) {
         // existing configs...
         "fs": false,
         "os": require.resolve("os-browserify/browser"),
-        "path": require.resolve("path-browserify"),
+        "path": require.resolve("path-browserify"),     
+        'stream': require.resolve('stream-browserify'),
+        'buffer': require.resolve('buffer/'),
+        'util': require.resolve('util/'),
+        'assert': require.resolve('assert/')      
    }
     
     return config

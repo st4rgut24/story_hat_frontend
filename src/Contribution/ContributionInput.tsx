@@ -28,16 +28,22 @@ const ContributionInput = (props: any) => {
             console.log(`contribution cid ${curCID} to prev cid ${props.curCID}`);
             const curCidBytes = Web3Global.convertCidToBytes(curCID);
             const prevCIDBytes = Web3Global.convertCidToBytes(props.curCID); 
-            ContractGlobal.storyContract?.contribute(curCidBytes, prevCIDBytes).then((tx) => {
-                tx.wait().then(() => {
-                    console.log("new contribution has been added setting cid to", curCID);
-                    Web3Global.getStoryContent(curCID).then((updatedPrev) => {
+            ContractGlobal.storyContract?.contribute(curCidBytes, prevCIDBytes,{gasPrice:50000000000, gasLimit: 350449}).then((tx) => {
+                console.log("new contribution has been added setting cid to", curCID);
+                console.log("submit contrib transaction hash", tx.hash);
+                Web3Global.getStoryContent(curCID).then((updatedPrev) => {
+                    props.setIsLoading(true);
+                    // waiting for confirmations
+                    tx.wait().then(() => {
                         console.log("updating the previous contrib to ", updatedPrev);
                         setPrevContribution(updatedPrev);
                         resetContribution();
                         console.log("updating current cid to", curCID);
                         props.setCID(curCID);
-                    });
+                        props.setIsLoading(false);
+                    })
+                }).catch((err) => {
+                  // TODO: output error message here, asking user to try resubmitting
                 })
             })
         })

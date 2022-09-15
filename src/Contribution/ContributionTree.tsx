@@ -88,7 +88,7 @@ export default function ContributionTree(props: any) {
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeSelect={handleNodeSelect}
       selected={selection}
-      sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+      sx={{ width: '100%', maxWidth: 500, maxHeight: 360, bgcolor: 'background.paper', overflow: 'auto'}}
     >
       {rootNode ? renderTree(rootNode): undefined}
     </TreeView>

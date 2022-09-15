@@ -4,13 +4,22 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { Web3ReactProvider } from '@web3-react/core'
+import { Web3Provider } from "@ethersproject/providers";
+
+function getLibrary(provider: any) {
+  return new Web3Provider(provider);
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   // causing useeffect to run twice in certain cases
   <React.StrictMode>
-    <App />
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <App />
+    </Web3ReactProvider>,      
   </React.StrictMode>
 );
 
