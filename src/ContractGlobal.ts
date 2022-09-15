@@ -18,6 +18,7 @@ class ContractGlobal {
     storyContract: Story | undefined;
 
     signer: any;
+    setContractState: ((storyShareContract: StoryShare) => void) | undefined;
     
     setSigner = async (library: any) => {
         this.signer = await library.getSigner();
@@ -25,7 +26,11 @@ class ContractGlobal {
             SharedStoryContractAddr,
             StoryShareDeployed.abi,
             this.signer
-            ) as unknown as StoryShare;        
+            ) as unknown as StoryShare;
+
+        if (this.setContractState) {
+            this.setContractState(this.storyShareContract);
+        }    
     }
 
     contribute = async (prevCid: string, cid: string) => {

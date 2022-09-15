@@ -37,6 +37,12 @@ const ResponsiveAppBar = (props: any) => {
     setAnchorElUser(null);
   };
 
+  const handleReturnToMainPage = () => {
+    props.setCurCID("");
+    props.setPage("Welcome");
+    // reset it so we can choose the same story
+  }
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -46,7 +52,7 @@ const ResponsiveAppBar = (props: any) => {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            onClick={handleReturnToMainPage}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -90,7 +96,7 @@ const ResponsiveAppBar = (props: any) => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={() => props.setPage(page)}>
+                <MenuItem key={page}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}

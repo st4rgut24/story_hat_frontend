@@ -6,6 +6,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
+import { StoryShare } from './typechain-types/StoryShare.sol/StoryShare';
 import { SharedStructs } from './typechain-types/StoryShare.sol/StoryShare';
 import ContractGlobal from './ContractGlobal';
 import { useState, useEffect } from 'react';
@@ -14,12 +15,17 @@ import Web3Global from './Web3Global';
 
 const Welcome = (props: any) => {
     const [storyDetailsArr, setStoryDetailsArr] = useState<SharedStructs.StoryDetailsStructOutput[]>([])
+    const [storyShareContract, setStoryShareContract] = useState<StoryShare | undefined>()
+
+    useEffect(() => {
+        ContractGlobal.setContractState = setStoryShareContract;
+    },[])
 
     useEffect(() => {   
-        if (ContractGlobal.storyShareContract) {
+        if (ContractGlobal.storyShareContract) {         
             ContractGlobal.storyShareContract.getStoryDetails().then((storyDetailsRes) => setStoryDetailsArr(storyDetailsRes));
         }
-    }, [props.signer]);
+    },[storyShareContract]);
 
     function stringifyGenre(genreBytes: BytesLike): string {
         return ethers.utils.parseBytes32String(genreBytes);
@@ -28,6 +34,7 @@ const Welcome = (props: any) => {
     function handleClickStory(cidBytes: string): void {
         ContractGlobal.setStory(cidBytes).then(() => {
             const storyRootCID = Web3Global.convertBytesToCid(cidBytes);
+            const curCid = props.curCID;
             props.setCurCID(storyRootCID);
         });
     }

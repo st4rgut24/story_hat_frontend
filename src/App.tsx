@@ -51,8 +51,8 @@ export default function App() {
 
   return (
     <div className="App">
-        <Header setPage={setPage}/>
-        {page==="Welcome" && <Welcome signer={signer} setCurCID={setCurCID}/>}
+        <Header setPage={setPage} setCurCID={setCurCID} />
+        {page==="Welcome" && <Welcome signer={signer} setCurCID={setCurCID} curCID={curCID}/>}
         {page==="Create" && <Create/>}
         {page===CONTRIBUTE_PAGE && <Contribution setCurCID={setCurCID} curCID={curCID} setIsLoading={setIsLoading} />}
         <Spinner isLoading={isLoading} />
