@@ -9,6 +9,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import ContributionInput from './ContributionInput';
 import ContributionNav from './ContributionNav';
 import ContractGlobal from '../ContractGlobal';
+import Vote from '../Vote';
 
 import { SharedStructs } from '../typechain-types/StoryShare.sol/Story';
 import Web3Global from '../Web3Global';
@@ -104,15 +105,15 @@ const Contribution = (props: any) => {
                         aria-label="account of current user"
                         aria-controls="menu-appbar"
                         aria-haspopup="true"
-                        onClick={onGetNextContrib}
+                        onClick={onGetPrevContrib}
                         color="inherit"
-                        disabled={next === -1}
+                        disabled={prev === -1}
                     >
                         <ArrowForwardIosIcon/>
-                    </IconButton>               
-                </Grid>
-
+                    </IconButton>                             
+                </Grid>                
             </Grid>
+            <Vote contribution={contribution} userAddr={props.userAddr} />
         </Box>
     );
 };

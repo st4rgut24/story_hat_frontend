@@ -6,7 +6,7 @@ export default function ContributionNav(props: any) {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        {props.listView && <ContributionList setCID={props.setCID} contribution={props.contribution} setNext={props.setNext} setPrev={props.setPrev}/> }
+        {props.listView && <ContributionList storyline={props.storyline} setCID={props.setCID} contribution={props.contribution} setNext={props.setNext} setPrev={props.setPrev}/> }
         {!props.listView && <ContributionTree storyline={props.storyline} setCID={props.setCID} contribution={props.contribution} setNext={props.setNext} setPrev={props.setPrev}/> }        
       </Grid>
     </Grid>

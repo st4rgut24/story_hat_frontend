@@ -17,6 +17,7 @@ export default function App() {
   const [signer, setSigner] = useState();
   const [page, setPage] = useState("Welcome")
   const [curCID, setCurCID] = useState("");
+  const [userAddr, setUserAddr] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { library } = useWeb3React();
@@ -36,10 +37,10 @@ export default function App() {
 
   return (
     <div className="App">
-        <Header setPage={setPage} setCurCID={setCurCID} />
+        <Header setPage={setPage} setCurCID={setCurCID} setUserAddr={setUserAddr}/>
         {page==="Welcome" && <Welcome signer={signer} setCurCID={setCurCID} curCID={curCID}/>}
         {page==="Create" && <Create setIsLoading={setIsLoading} />}
-        {page===CONTRIBUTE_PAGE && <Contribution setCurCID={setCurCID} curCID={curCID} setIsLoading={setIsLoading} />}
+        {page===CONTRIBUTE_PAGE && <Contribution setCurCID={setCurCID} curCID={curCID} setIsLoading={setIsLoading} userAddr={userAddr}/>}
         <Spinner isLoading={isLoading} />
     </div>
   )

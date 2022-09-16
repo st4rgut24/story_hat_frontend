@@ -12,6 +12,8 @@ declare var window: any
 
 const SharedStoryContractAddr = "0x5468C4eDf4A2e4055E408c365aD5EAd12541bf7a";
 
+export const StorylineMap = ['Open', 'Drafting', 'Final Review', 'Publish'];
+
 class ContractGlobal {
     storyShareContract: StoryShare | undefined;
     StoryContractAddr: string | undefined; // address of the story contract
@@ -19,7 +21,7 @@ class ContractGlobal {
 
     signer: any;
     setContractState: ((storyShareContract: StoryShare) => void) | undefined;
-    
+
     setSigner = async (library: any) => {
         this.signer = await library.getSigner();
         this.storyShareContract = new Contract(
@@ -42,6 +44,27 @@ class ContractGlobal {
             console.log("tx included");
         }
     }
+
+    voteToDraft = async(cid: string) => {
+        if (this.storyContract){
+            let tx = await this.storyContract.voteToDraft(cid);
+            await tx.wait();
+        }
+    }
+
+    voteToPublish = async(cid: string) => {
+        if (this.storyContract){
+            let tx = await this.storyContract.voteToPublish(cid);
+            await tx.wait();
+        }
+    }
+
+    publishDraft = async(prevCid: string, cid: string) => {
+        if (this.storyContract){
+            let tx = await this.storyContract.publishDraft(prevCid, cid);
+            await tx.wait();
+        }
+    }    
 
     /**
      * 

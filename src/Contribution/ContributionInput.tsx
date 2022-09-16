@@ -5,11 +5,13 @@ import Web3Global from '../Web3Global';
 
 const ContributionInput = (props: any) => {
 
-    const [prevContribution, setPrevContribution] = useState("An example story you wish to contribute to");
+    const [prevContribution, setPrevContribution] = useState("");
     const [nextContribution, setNextContribution] = useState("");
 
     useEffect(() => {
+        props.setIsLoading(true);
        Web3Global.getStoryContent(props.curCID).then((storyContent: string) => {
+            props.setIsLoading(false);
             setPrevContribution(storyContent);
        }).catch((error: Error) => setPrevContribution("Error:" + error.message));
     }, [props.curCID])
@@ -54,7 +56,7 @@ const ContributionInput = (props: any) => {
             <Grid item xs={12}>
                 <TextField
                     id="outlined-multiline-flexible"
-                    label="prevContribution"
+                    label="Previous Contribution"
                     fullWidth
                     multiline
                     value={prevContribution}
@@ -74,7 +76,7 @@ const ContributionInput = (props: any) => {
                     margin="normal"
                 />                
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
                 <Button
                     id="outlined-multiline-flexible"
                     onClick={onContributeSubmit}
@@ -82,7 +84,7 @@ const ContributionInput = (props: any) => {
                 >
                     Contribute
                 </Button>                
-            </Grid>                   
+            </Grid>         
         </Grid>
     );
 };

@@ -18,7 +18,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 
 const options = ['Metamask', 'Wallet Connect', 'Coinbase Wallet'];
 
-export default function SplitButton() {
+export default function SplitButton(props:any) {
     const defaultSetWallet = "Connect Wallet";
     const [wallet, setWallet] = React.useState(defaultSetWallet);
 
@@ -27,6 +27,10 @@ export default function SplitButton() {
 
   const { activate, deactivate } = useWeb3React();
   const { active, chainId, account } = useWeb3React();
+
+  React.useEffect(() => {
+    props.setUserAddr(account);
+  }, [account])
 
   const CoinbaseWallet = new WalletLinkConnector({
     url: `https://goerli.infura.io/v3/14c911050f2b4ae792218579902f1a6c`,

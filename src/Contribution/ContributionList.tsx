@@ -9,6 +9,10 @@ import ListSubheader from '@mui/material/ListSubheader';
 
 import { useState, useEffect } from 'react';
 import Web3Global from '../Web3Global';
+import { SharedStructs } from '../typechain-types/LibraryStoryline';
+import { Typography } from '@mui/material';
+import ContractGlobal from '../ContractGlobal';
+import { StorylineMap } from '../ContractGlobal';
 
 const EMPTY_CID = "0x";
 
@@ -18,17 +22,18 @@ export default function ContributionList(props: any) {
 
   const [prevContribHeaderIdx, setPrevContribHeaderIdx] = useState(-1);
   const [nextContribHeaderIdx, setNextContribHeaderIdx] = useState(-1);
+  const [prevContribStruct, setPrevContribStruct] = useState<SharedStructs.ContributionStructOutput | undefined>();
 
   useEffect(() => {
   }, [])
 
   useEffect(() => {
-    if (props.contribution) {
+    if (props.contribution && props.storyline.length > 0) {
       const prevContribCID = props.contribution.prevCID;
       if (prevContribCID){
         props.setPrev(prevContribCID); // cid of prev contribution here
       }
-
+      setPrevContribStruct(getContribFromCid(prevContribCID));
       const prevContribArr = prevContribCID === EMPTY_CID ? [] : [prevContribCID]; // undefined necessary for mapping 
 
       const allCidArr = prevContribArr.concat(props.contribution.nextCIDs);
@@ -37,7 +42,12 @@ export default function ContributionList(props: any) {
       setContribHeaderIdx(props.contribution.prevCID, linkedCidArr);
       setLinkedCids(linkedCidArr);
     }
-  }, [props.contribution])
+  }, [props.contribution, props.storyline])
+
+  const getContribFromCid = (cid: string): SharedStructs.ContributionStructOutput | undefined => {
+    const contribs = props.storyline as SharedStructs.ContributionStructOutput[];
+    return contribs.find((contrib) => cid === contrib.cid);
+  }
 
   const setContribHeaderIdx = (prevContribCID: string, linkedCidArr: string[]) =>  {
     // if not a newly created story and there are contributions
@@ -76,8 +86,25 @@ export default function ContributionList(props: any) {
     <List dense sx={{ width: '100%', maxWidth: 500, maxHeight: 360, bgcolor: 'background.paper', overflow: 'auto'}}>
         {linkedCids.map((cid, index) => {
           const labelId = `checkbox-list-secondary-label-${cid}`;
+          const prevContribIdx = prevContribHeaderIdx + 1;
+          if (prevContribIdx === 0){
+          }
           return index === prevContribHeaderIdx ? <ListSubheader>{`Previous Contribution`}</ListSubheader> : 
-            index === nextContribHeaderIdx ? <ListSubheader>{`Next Contributions`}</ListSubheader>:(
+            index === nextContribHeaderIdx ? <ListSubheader>{`Next Contributions`}</ListSubheader>:
+            index !== prevContribIdx ? 
+            (
+              <ListItem
+                  key={cid}
+                  disablePadding
+              >
+              <ListItemButton
+                  onClick={(event) => handleListItemClick(event, cid)}
+              >
+                  <ListItemText id={labelId} primary={cid} />               
+              </ListItemButton>
+              </ListItem>
+          ) : 
+            (
               <ListItem
                   key={cid}
                   disablePadding
@@ -88,10 +115,34 @@ export default function ContributionList(props: any) {
                   <ListItemAvatar>
                   <Avatar
                       alt={`Avatar n°${cid}`}
-                      src={`/static/images/avatar/${cid}.jpg`}
+                      src={`/quill.png`}
                   />
                   </ListItemAvatar>
-                  <ListItemText id={labelId} primary={cid} />
+                <ListItemText
+                  primary={`Author: ${prevContribStruct?.authorAddr}`}
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        Status: {StorylineMap[prevContribStruct?.state ?? 0]}
+                      </Typography>
+                      <br/>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                        overflow={'hidden'}
+                      >
+                        {cid}
+                      </Typography>                      
+                    </React.Fragment>
+                  }
+                />                  
               </ListItemButton>
               </ListItem>
           );

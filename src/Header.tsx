@@ -141,7 +141,7 @@ const ResponsiveAppBar = (props: any) => {
 
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
-                <SplitButton/>
+                <SplitButton setUserAddr={props.setUserAddr}/>
               </Tooltip>
               <Menu
                 sx={{ mt: '45px' }}
