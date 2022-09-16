@@ -19,7 +19,7 @@ root.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
       <App />
-    </Web3ReactProvider>,      
+    </Web3ReactProvider>
   </React.StrictMode>
 );
 

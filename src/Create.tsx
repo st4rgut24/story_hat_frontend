@@ -11,7 +11,7 @@ import ContractGlobal from './ContractGlobal';
 import Web3Global from './Web3Global';
 import { ethers } from 'ethers';
 
-const Create = () => {
+const Create = (props: any) => {
     const [title, setTitle] = useState('')
     const [genre, setGenre] = useState('Thriller');
     const [summary, setSummary] = useState('');
@@ -45,9 +45,11 @@ const Create = () => {
             if (ContractGlobal.storyShareContract){
                 const bytes32Genre = ethers.utils.formatBytes32String(genre);
                 let tx = await ContractGlobal.storyShareContract.createStory(cidBytes, title, summary, bytes32Genre);
+                props.setIsLoading(true);
                 await tx.wait();
-            
                 console.log("tx included");
+                props.setIsLoading(false);
+                
             }
             else {
                 throw new Error("storyshare contract is undefined");

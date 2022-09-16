@@ -25,7 +25,7 @@ const Welcome = (props: any) => {
         if (ContractGlobal.storyShareContract) {         
             ContractGlobal.storyShareContract.getStoryDetails().then((storyDetailsRes) => setStoryDetailsArr(storyDetailsRes));
         }
-    },[storyShareContract]);
+    },[storyShareContract, props.curCID]);
 
     function stringifyGenre(genreBytes: BytesLike): string {
         return ethers.utils.parseBytes32String(genreBytes);
