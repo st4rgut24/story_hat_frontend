@@ -49,6 +49,7 @@ const Create = (props: any) => {
                 await tx.wait();
                 console.log("tx included");
                 props.setIsLoading(false);
+                props.setPage("Welcome");
                 
             }
             else {

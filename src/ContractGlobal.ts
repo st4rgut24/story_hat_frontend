@@ -6,11 +6,11 @@ import StoryShareDeployed from "./artifacts/contracts/StoryShare.sol/StoryShare.
 
 import { StoryShare } from './typechain-types/StoryShare.sol/StoryShare';
 import { Story } from './typechain-types/StoryShare.sol/Story';
-import { JsonRpcProvider, JsonRpcSigner } from "@ethersproject/providers";
 
 declare var window: any
 
-const SharedStoryContractAddr = "0x5468C4eDf4A2e4055E408c365aD5EAd12541bf7a";
+// TODO: REPLACE EVERY TIME CONTRACT IS DEPLOYED
+const SharedStoryContractAddr = "0xf24478CEb2e6913d530D7E954f4F8DbFCB00cF3F";
 
 export const StorylineMap = ['Open', 'Drafting', 'Final Review', 'Publish'];
 
@@ -19,20 +19,50 @@ class ContractGlobal {
     StoryContractAddr: string | undefined; // address of the story contract
     storyContract: Story | undefined;
 
+    address: string | undefined;
+    provider: ethers.providers.Web3Provider | undefined;
     signer: any;
+
+    setUserAddr: ((userAddr: string) => void) | undefined;
     setContractState: ((storyShareContract: StoryShare) => void) | undefined;
+    setConnectedState: ((isConnected: boolean) => void) | undefined;
 
-    setSigner = async (library: any) => {
-        this.signer = await library.getSigner();
-        this.storyShareContract = new Contract(
-            SharedStoryContractAddr,
-            StoryShareDeployed.abi,
-            this.signer
-            ) as unknown as StoryShare;
+    constructor(){
+        const { ethereum } = window;
+        if (!ethereum) {
+            alert("Please install MetaMask!");
+            return;
+          }
+        this.provider = new ethers.providers.Web3Provider(ethereum);
+        this.connectWallet();
+    }
 
-        if (this.setContractState) {
-            this.setContractState(this.storyShareContract);
-        }    
+    connectWallet = async () => {
+        this.provider?.send("eth_requestAccounts", []).then(() => {
+            this.signer = this.provider?.getSigner();
+
+            this.storyShareContract = new Contract(
+                SharedStoryContractAddr,
+                StoryShareDeployed.abi,
+                this.signer
+            ) as unknown as StoryShare; 
+            // inform other components that the contract has been set and user connected           
+            if (this.setContractState) {
+                this.setContractState(this.storyShareContract);
+            }
+            if (this.setConnectedState) {
+                this.setConnectedState(true);
+            }
+            return this.signer.getAddress();
+        }).then((address) => {
+            if (this.setUserAddr) {
+                this.setUserAddr(address);
+            }
+            console.log('connected address is', address);
+        })
+        .catch((error) => {
+            console.error('error reason', error.message);
+        });
     }
 
     contribute = async (prevCid: string, cid: string) => {
@@ -64,7 +94,14 @@ class ContractGlobal {
             let tx = await this.storyContract.publishDraft(prevCid, cid);
             await tx.wait();
         }
-    }    
+    }
+
+    getContribution = async(cidBytes: BytesLike) => {
+        if (this.storyContract) {
+            const contrib = await this.storyContract.getContribution(cidBytes)
+            return contrib;
+        }
+    }
 
     /**
      * 
@@ -75,7 +112,7 @@ class ContractGlobal {
         if (this.storyShareContract){
             this.StoryContractAddr = await this.storyShareContract.getStoryByCID(cid);
             console.log("set the story contract:", this.StoryContractAddr);
-            if (this.StoryContractAddr && this.signer){
+            if (this.StoryContractAddr){
                 this.storyContract = new ethers.Contract(
                     this.StoryContractAddr,
                     StoryDeployed.abi,

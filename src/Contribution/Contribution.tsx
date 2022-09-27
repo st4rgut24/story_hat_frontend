@@ -28,7 +28,7 @@ const Contribution = (props: any) => {
         if (ContractGlobal.storyShareContract && props.curCID.length > 0) {
             const cidBytes = Web3Global.convertCidToBytes(props.curCID);
             if (ContractGlobal.storyContract){
-                ContractGlobal.storyContract.getContribution(cidBytes).then((contrib) => {
+                ContractGlobal.getContribution(cidBytes).then((contrib) => {
                     console.log("great success set new contrib to cid", props.curCID);
                     setContribution(contrib);
                     const curBytesCID = Web3Global.convertCidToBytes(props.curCID);
@@ -41,14 +41,6 @@ const Contribution = (props: any) => {
             }
         }
     }, [props.curCID]);
-
-    function onGetNextContrib(event: any) {
-        // TODO
-    }
-
-    function onGetPrevContrib(event: any) {
-        // TODO
-    }
 
     const handleToggle = (
         event: React.MouseEvent<HTMLElement>,
@@ -85,35 +77,9 @@ const Contribution = (props: any) => {
                 </Grid>
                 <Grid item xs={6}>
                     <ContributionNav setCID={props.setCurCID} contribution={contribution} storyline={storyline} setNext={setNext} setPrev={setPrev} listView={listView}/>
-                </Grid>  
-                <Grid item xs={6}>
-                    <IconButton
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        onClick={onGetPrevContrib}
-                        color="inherit"
-                        disabled={prev === -1}
-                    >
-                        <ArrowBackIosIcon/>
-                    </IconButton>                             
-                </Grid>
-                <Grid item xs={6} container justifyContent="flex-end">
-                    <IconButton
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        onClick={onGetPrevContrib}
-                        color="inherit"
-                        disabled={prev === -1}
-                    >
-                        <ArrowForwardIosIcon/>
-                    </IconButton>                             
-                </Grid>                
+                </Grid>              
             </Grid>
-            <Vote contribution={contribution} userAddr={props.userAddr} />
+            <Vote contribution={contribution} setContribution={setContribution} userAddr={props.userAddr} storyline={storyline} />
         </Box>
     );
 };

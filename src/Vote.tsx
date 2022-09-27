@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import ContractGlobal, { StorylineMap } from "./ContractGlobal";
 import { SharedStructs } from "./typechain-types/LibraryStoryline";
+import Web3Global from "./Web3Global";
+import { ethers } from "ethers";
 
 export const CONTRIBUTE_PAGE = "Contribute";
 
@@ -20,13 +22,35 @@ const DEFAULT_CONTRIB_STATUS: ContribStatus = {
 
 export default function Vote(props: any) {
     const [contribState, setContribStatus] = useState<ContribStatus>(DEFAULT_CONTRIB_STATUS);
-
+    const [bytesCID, setBytesCID] = useState(new Uint8Array());
+    
     // export const StorylineMap = ['Open', 'Drafting', 'Final Review', 'Publish'];
     let status: ContribStatus = DEFAULT_CONTRIB_STATUS;
     useEffect(() => {
-        const state = StorylineMap[props.contribution.state];
-        const isAuthor = isUserAuthor(props.userAddr);
+        if (props.storyline.length > 0 && props.contribution){
+            const state = StorylineMap[props.contribution.state];
+            const cidBytes = ethers.utils.arrayify(props.contribution.cid);
+            setBytesCID(cidBytes);
+            const isAuthor = isUserAuthor(props.userAddr);
+            // comment after testing
+            if (!isAuthor){
+                console.log('you are not an author');
+            }
+            else {
+                console.log('you are an author');
+            }
+            status = getStatus(state, isAuthor);            
+            setContribStatus(status);   
+        }
+    }, [props.storyline, props.contribution])
 
+    /**
+     * Get the status of contribution as regards to publishing
+     * @param state where contribution is in the publishing process
+     * @param isAuthor is signer author of the contribution
+     * @returns status which controls the status component
+     */
+    function getStatus(state: string, isAuthor: boolean): ContribStatus {
         if (state === 'Open'){
             if (isAuthor) {
                 status = {header: 'Vote to Draft Story', contribution: props.contribution, disabled: false, clickHandler:voteToDraft}
@@ -50,8 +74,8 @@ export default function Vote(props: any) {
         else {
             throw new Error("no such state");
         }
-        setContribStatus(status);
-    }, props.contribution.state)
+        return status;
+    }
 
     // is use an author of the storyline
     function isUserAuthor(userAddr: string): boolean {
@@ -59,9 +83,14 @@ export default function Vote(props: any) {
         return contribs.find((contrib) => contrib.authorAddr === userAddr) !== undefined;
     }
 
-    function voteToDraft(): void {
+    // TODO: Sometimes does not work with the Root story because contribState is not set
+    async function voteToDraft(): Promise<void> {
         if (contribState.contribution){
-            ContractGlobal.voteToDraft(contribState.contribution.cid);
+            await ContractGlobal.voteToDraft(contribState.contribution.cid)
+            console.log("successfully voted to draft");
+            const contrib = await ContractGlobal.getContribution(bytesCID);
+            console.log("successfully got contribution after voting to draft");
+            props.setContribution(contrib);
         }
     }
 
@@ -83,7 +112,7 @@ export default function Vote(props: any) {
 
     return (
         <Button disabled={contribState.disabled} onClick={contribState.clickHandler} hidden={!isContribStateExist()}>
-            contribStat.header
+            {contribState.header}
         </Button>
     )
 }

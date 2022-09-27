@@ -22,6 +22,7 @@ const Welcome = (props: any) => {
     },[])
 
     useEffect(() => {   
+        // 
         if (ContractGlobal.storyShareContract) {         
             ContractGlobal.storyShareContract.getStoryDetails().then((storyDetailsRes) => setStoryDetailsArr(storyDetailsRes));
         }
